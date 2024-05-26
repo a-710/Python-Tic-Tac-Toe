@@ -1,10 +1,15 @@
 import tkinter
 import tkinter.ttk
 import random
+import time
 
 root=tkinter.Tk()
 screen_width = root.winfo_screenwidth()/2
 screen_height = root.winfo_screenheight()/2
+
+# Label to display the winner
+winner_label = tkinter.Label(root, text="", font=("Helvetica", 16))
+winner_label.grid(row=3, column=0, columnspan=3, pady=10)
 
 #print (screen_width, 'x', screen_height) Debug for screenres
 
@@ -13,11 +18,26 @@ if screen_height>screen_width:
 else:
     minres=screen_height
 
+def check_winner():
+    winning_combinations = [
+        (0, 1, 2), (3, 4, 5), (6, 7, 8),  # rows
+        (0, 3, 6), (1, 4, 7), (2, 5, 8),  # columns
+        (0, 4, 8), (2, 4, 6)  # diagonals
+    ]
+    for a, b, c in winning_combinations:
+        if buttons[a].cget("text") == buttons[b].cget("text") == buttons[c].cget("text") != " ":
+            return buttons[a].cget("text")
+    return None
+
 def on_button_click(event):
      button=event.widget
      if button.cget("text")==" ":
         button.config(text="X")
-        root.after(1,computer_click)
+        winner = check_winner()
+        if winner:
+            game_over(winner)
+        else:
+            root.after(1,computer_click)
     
 
 def computer_click():
@@ -25,34 +45,23 @@ def computer_click():
     if empty_buttons:
         button = random.choice(empty_buttons)
         button.config(text="O")
+        winner = check_winner()
+        if winner:
+            game_over(winner)
 
-def check_button_text():
+'''def check_button_text(): #More debug func
     button_text = button.cget("text")
-    print(f"The text on the button is: {button_text}")
+    print(f"The text on the button is: {button_text}")'''
 
+def game_over(winner):
+    winner_label.config(text=f"The winner is {winner}!")
+    for button in buttons:
+        button.config(state="disabled") # Disables all the buttons to prevent bugs
+    root.after(2000,exit)
+    
 minres=int(minres)
 root.title("Tic Tac Toe")
 root.geometry(str(minres)+"x"+str(minres))
-
-""" Another way I tried to make the buttons
-btn0 = tkinter.Button(root,text="Apasa!",command = on_button_click,width=int(minres/50),height=int(minres/100))
-#btn0.pack()
-btn1 = tkinter.Button(root,text="Apasa!",command = on_button_click,width=int(minres/50),height=int(minres/100))
-#btn1.pack()
-btn2 = tkinter.Button(root,text="Apasa!",command = on_button_click,width=int(minres/50),height=int(minres/100))
-#btn2.pack()
-btn3 = tkinter.Button(root,text="Apasa!",command = on_button_click,width=int(minres/50),height=int(minres/100))
-#btn3.pack()
-btn4 = tkinter.Button(root,text="Apasa!",command = on_button_click,width=int(minres/50),height=int(minres/100))
-#btn4.pack()
-btn5 = tkinter.Button(root,text="Apasa!",command = on_button_click,width=int(minres/50),height=int(minres/100))
-#btn5.pack()
-btn6 = tkinter.Button(root,text="Apasa!",command = on_button_click,width=int(minres/50),height=int(minres/100))
-#btn6.pack()
-btn7 = tkinter.Button(root,text="Apasa!",command = on_button_click,width=int(minres/50),height=int(minres/100))
-#btn7.pack()
-btn8 = tkinter.Button(root,text="Apasa!",command = on_button_click,width=int(minres/50),height=int(minres/100))
-#btn8.pack()"""
 
 buttons = []
 butoncounter=0
