@@ -1,5 +1,6 @@
 import tkinter
 import tkinter.ttk
+import random
 
 root=tkinter.Tk()
 screen_width = root.winfo_screenwidth()/2
@@ -13,8 +14,17 @@ else:
     minres=screen_height
 
 def on_button_click(event):
-    button=event.widget
-    button.config(text="X")
+     button=event.widget
+     if button.cget("text")==" ":
+        button.config(text="X")
+        root.after(1,computer_click)
+    
+
+def computer_click():
+    empty_buttons = [button for button in buttons if button.cget("text") == " "]
+    if empty_buttons:
+        button = random.choice(empty_buttons)
+        button.config(text="O")
 
 def check_button_text():
     button_text = button.cget("text")
